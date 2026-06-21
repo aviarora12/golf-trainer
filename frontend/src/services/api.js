@@ -1,7 +1,9 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'http://localhost:8000';
+// Set EXPO_PUBLIC_API_URL in your env (e.g. Vercel project env vars) to point
+// the web/mobile build at a deployed backend. Falls back to localhost for dev.
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
