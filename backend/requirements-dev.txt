@@ -1,0 +1,4 @@
+# Test/dev-only dependencies (install on top of requirements.txt)
+-r requirements.txt
+pytest==7.4.4
+httpx<0.28          # starlette 0.27 TestClient is incompatible with httpx>=0.28

@@ -65,7 +65,7 @@ class AnalysisEngine:
         mid_hip_impact_y = (left_hip_impact[1] + right_hip_impact[1]) / 2
 
         hip_rise = mid_hip_setup_y - mid_hip_impact_y
-        return hip_rise > 0.05  # 5% of frame height
+        return bool(hip_rise > 0.05)  # 5% of frame height
 
     def detect_reverse_pivot(self, landmarks_setup: List[Dict], landmarks_top: List[Dict]) -> bool:
         """Detect reverse pivot: spine tilt toward target at top."""
@@ -78,7 +78,7 @@ class AnalysisEngine:
         mid_top_x = (left_shoulder_top[0] + right_shoulder_top[0]) / 2
 
         lateral_shift = mid_top_x - mid_setup_x
-        return lateral_shift > 0.03  # 3% toward target
+        return bool(lateral_shift > 0.03)  # 3% toward target
 
     def detect_casting(self, landmarks: List[Dict]) -> bool:
         """Detect casting: lag angle < 60° at mid-downswing."""
@@ -89,14 +89,14 @@ class AnalysisEngine:
         shaft_vec = np.array([arm_vec[1], -arm_vec[0], arm_vec[2]])
 
         lag_angle = self.compute_angle(left_elbow, left_wrist, left_wrist + shaft_vec)
-        return lag_angle < 60
+        return bool(lag_angle < 60)
 
     def detect_sway(self, landmarks_backswing: List[Dict]) -> bool:
         """Detect sway: hip lateral movement > 1 hip-width."""
         left_hip = self.get_landmark_xyz(landmarks_backswing, 23)
         right_hip = self.get_landmark_xyz(landmarks_backswing, 24)
         hip_width = abs(right_hip[0] - left_hip[0])
-        return hip_width > 0.20  # Threshold
+        return bool(hip_width > 0.20)  # Threshold
 
     def detect_camera_angle(self, landmarks: List[Dict]) -> str:
         """Detect down-the-line vs face-on."""
