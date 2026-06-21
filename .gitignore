@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.env
+*.log
+
+# Node / Expo
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+npm-debug.*
+yarn-error.*
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Media / build artifacts
+*.mp4
+*.mov
+backend/tmp/
