@@ -1,0 +1,78 @@
+# Render blueprint for the SwingCheck backend.
+# Deploys the FastAPI API, the Celery worker, Redis, and Postgres together.
+# In Render: New > Blueprint > point at this repo. Secrets marked `sync: false`
+# (AWS / Stripe / SendGrid / SECRET_KEY) are entered in the dashboard.
+services:
+  - type: web
+    name: swingcheck-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: swingcheck-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: swingcheck-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        value: us-west-2
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+
+  - type: worker
+    name: swingcheck-worker
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    dockerCommand: celery -A app.tasks.celery_tasks worker --loglevel=info
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: swingcheck-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: swingcheck-redis
+          property: connectionString
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        value: us-west-2
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+
+  - type: redis
+    name: swingcheck-redis
+    plan: starter
+    maxmemoryPolicy: noeviction
+    ipAllowList: []   # internal only
+
+databases:
+  - name: swingcheck-db
+    databaseName: swingcheck_db
+    user: swingcheck
+    plan: starter
