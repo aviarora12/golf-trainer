@@ -21,6 +21,11 @@ frontend/   Expo React Native app (screens, components, navigation, api client)
 ml_models/  Reserved for custom models (MediaPipe downloads at runtime)
 ```
 
+## Deployment
+
+Frontend → Vercel (Expo web), backend → Render (FastAPI + Celery + Redis +
+Postgres). See [DEPLOYMENT.md](./DEPLOYMENT.md) for the full walkthrough.
+
 ## Local development
 
 ### 1. Infrastructure (PostgreSQL + Redis)
